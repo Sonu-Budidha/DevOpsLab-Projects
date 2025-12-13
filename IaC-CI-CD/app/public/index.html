@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Random Quote Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+    #quote {
+      font-size: 1.8rem;
+      max-width: 600px;
+      text-align: center;
+      margin-bottom: 30px;
+      line-height: 1.4;
+      font-style: italic;
+      user-select: none;
+      transition: opacity 0.3s ease;
+    }
+    button {
+      background: #fff;
+      color: #764ba2;
+      border: none;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    button:hover {
+      background: #764ba2;
+      color: white;
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="quote">Loading quote...</div>
+  <button onclick="fetchQuote()">New Quote</button>
+  <footer>Powered by your awesome quote API</footer>
+
+  <script>
+    async function fetchQuote() {
+      const quoteDiv = document.getElementById('quote');
+      quoteDiv.style.opacity = 0; // fade out
+
+      try {
+        const response = await fetch('/api/quote');
+        const data = await response.json();
+        setTimeout(() => {
+          quoteDiv.textContent = `"${data.quote}"`;
+          quoteDiv.style.opacity = 1; // fade in
+        }, 300); // sync with fade out duration
+      } catch (error) {
+        quoteDiv.textContent = "Failed to fetch quote 😞";
+        quoteDiv.style.opacity = 1;
+      }
+    }
+
+    // Fetch a quote when page loads
+    fetchQuote();
+  </script>
+</body>
+</html>
+
