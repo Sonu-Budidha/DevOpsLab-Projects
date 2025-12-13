@@ -1,12 +1,3 @@
-Perfect 👍
-You’ve already shared **everything needed** (project structure, code, CI/CD workflow, Terraform, Docker, deploy script). No further questions are required.
-
-Below is a **student-friendly, well-structured `README.md`** written in the **same style as your reference**, with clear explanations, emojis, and step-by-step flow.
-
-You can **copy–paste this directly into `README.md`**.
-
----
-
 # 🚀 Project: Build Infrastructure as Code (IaC) & Deploy via CI/CD on AWS
 
 ## 🎯 Introduction
@@ -270,3 +261,4 @@ If you want:
 * Interview questions based on this project
 
 Just tell me 👍
+
