@@ -1,4 +1,4 @@
-# 🚀 Serverless Web App with Microservices APIs (AWS)
+# 🚀 Project: Serverless Web App with Microservices APIs
 
 ## 📌 Project Overview
 
