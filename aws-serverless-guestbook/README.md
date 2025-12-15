@@ -1,11 +1,4 @@
-Perfect choice 👍
-Your content is already good — I’ll **polish it into the same clean, professional style**, keep the **emoji usage minimal and consistent**, improve flow, and add a **cool interview-style summary at the end**, just like the others.
-
-Below is a **refined, GitHub-ready version** using the **same formatting and tone** you liked.
-
----
-
-# 🚀 Serverless Guestbook with AWS Lambda, API Gateway & DynamoDB
+# 🚀 Serverless Guestbook with AWS
 
 ## 📌 Project Overview
 
