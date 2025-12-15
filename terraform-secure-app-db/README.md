@@ -1,8 +1,3 @@
-Sure 👍
-Below is a **cleaned-up, professional `README.md`** with the **“Key Fixes & Learnings” section completely removed**, keeping it **simple, neat, and project-ready**.
-
----
-
 # 🚀 Terraform Project: EC2 Web Server with Secure RDS (AWS)
 
 ## 📌 Project Overview
