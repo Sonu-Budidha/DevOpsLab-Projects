@@ -1,4 +1,4 @@
-# 🚀 Serverless Guestbook with AWS
+# 🚀 Project: Serverless Guestbook with AWS
 
 ## 📌 Project Overview
 
