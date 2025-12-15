@@ -1,4 +1,4 @@
-# 🚀 Terraform Project: EC2 Web Server with Secure RDS (AWS)
+# 🚀 Project: EC2 Web Server with Secure RDS (Terraform)
 
 ## 📌 Project Overview
 
