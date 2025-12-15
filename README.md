@@ -117,5 +117,3 @@ DevOpsLab-Projects/
 * Each project is fully documented within its directory
 * Architectures follow industry best practices
 * Projects are designed for clarity, learning, and real-world applicability
-
-Just say 👍
