@@ -239,7 +239,7 @@ docker run -d --name app -p 8080:8080 $IMAGE_URI
 
 ---
 
-## 🔑 Required GitHub Secrets
+## 🔑 Required GitHub Repository Secrets
 
 | Secret Name           | Description               |
 | --------------------- | ------------------------- |
