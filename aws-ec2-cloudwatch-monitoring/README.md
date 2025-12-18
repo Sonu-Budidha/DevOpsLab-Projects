@@ -1,128 +1,262 @@
-🚀 Project: Host Website on AWS EC2 with Custom Folder Structure
-----------------------------------------------------------------------------------------
+# 🚀 Project: Centralized Monitoring for Two EC2 Instances using AWS CloudWatch
 
-🎤 Introduction:
-In this project, you'll set up a web server on AWS EC2 to host a website using Nginx. You’ll configure a VPC, public subnet, internet access, and deploy a website with a custom folder structure.
+## 📌 Project Overview
 
-🌍 End Result:
+This project demonstrates how to implement **centralized monitoring and alerting** for **two EC2 instances** on AWS using:
 
-EC2 instance hosting a website
+* **CloudWatch Agent** for metrics and logs
+* **IAM Roles** for secure access
+* **CloudWatch Dashboards** for visualization
+* **CloudWatch Alarms** for threshold monitoring
+* **SNS** for real-time notifications
 
-Custom folder structure for website deployment
+The solution monitors **CPU, memory, disk, load**, and **Apache logs**, and sends alerts when predefined thresholds are exceeded.
 
-Option for static website hosting on S3
+---
 
-🏛 Step 1 – Create a VPC
-----------------------------------------------------------------------------------------
-Go to VPC → Create VPC.
+## 🏗 Architecture
 
-Name: My-Project-VPC
+```
+                   ┌─────────────────────┐
+                   │   SNS Topic          │
+                   │ (Email Alerts)       │
+                   └─────────▲───────────┘
+                             │
+                   CloudWatch Alarms
+                             │
+        ┌────────────────────┴────────────────────┐
+        │              CloudWatch                  │
+        │  Metrics • Logs • Dashboards              │
+        └─────────▲──────────────────────▲─────────┘
+                  │                      │
+        ┌─────────┴─────────┐  ┌─────────┴─────────┐
+        │ EC2 Web Server     │  │ EC2 App Server     │
+        │ Apache + Logs      │  │ Metrics Only       │
+        │ CloudWatch Agent   │  │ CloudWatch Agent   │
+        └─────────▲─────────┘  └─────────▲─────────┘
+                  │                      │
+            IAM Role: CloudWatchAgentRole
+```
 
-CIDR Block: 10.0.0.0/16
+---
 
-Click Create VPC.
+## 🧰 Prerequisites
 
-Result: An isolated network for your project.
+* AWS Account
+* Basic knowledge of EC2 & IAM
+* SSH client
+* Email access (for SNS alerts)
 
+---
 
-🌐 Step 2 – Create Public Subnet
-----------------------------------------------------------------------------------------
-Go to VPC → Subnets → Create Subnet.
+## 📁 Project Components
 
-Name: Public-Subnet-1, CIDR: 10.0.1.0/24
+```bash
+aws-monitoring-project/
+├── ec2-instances/
+│   ├── Web-Server-01
+│   └── App-Server-01
+├── iam/
+│   └── CloudWatchAgentRole
+├── cloudwatch/
+│   ├── metrics
+│   ├── logs
+│   ├── dashboards
+│   └── alarms
+└── sns/
+    └── ec2-monitoring-alerts
+```
 
-Select My-Project-VPC and click Create Subnet.
+---
 
-Result: Subnet created for the web server.
+## 🖥 EC2 Configuration
 
+| Instance Name | Purpose                    |
+| ------------- | -------------------------- |
+| Web-Server-01 | Apache Web Server + Logs   |
+| App-Server-01 | Application / Load Testing |
 
-🔗 Step 3 – Attach Internet Gateway (IGW)
-----------------------------------------------------------------------------------------
-Go to VPC → Internet Gateways → Create IGW.
+**Common Settings**
 
-Name it My-IGW and attach to My-Project-VPC.
+* AMI: Amazon Linux 2
+* Instance Type: t2.micro
+* Same VPC & Subnet
+* SSH access from personal IP
 
-Result: VPC is connected to the internet.
+---
 
-🛣 Step 4 – Create Route Table
-----------------------------------------------------------------------------------------
-Go to VPC → Route Tables → Create Route Table.
+## 🔐 IAM Configuration
 
-Add route 0.0.0.0/0 → Target = My-IGW.
+### IAM Role
 
-Associate it with Public-Subnet-1.
+* **Name:** `CloudWatchAgentRole`
+* **Trusted Entity:** EC2
 
-Result: Internet access enabled for the subnet.
+### Permissions
 
-🔐 Step 5 – Create Security Group
-----------------------------------------------------------------------------------------
-Go to EC2 → Security Groups → Create Security Group.
+```text
+CloudWatchAgentServerPolicy
+```
 
-Add rules for SSH (22) and HTTP (80).
+✔ One IAM role reused across both EC2 instances
+✔ No access keys stored on servers
+✔ Follows least-privilege principle
 
-Result: Firewall configured for secure SSH and public HTTP access.
+---
 
-🖥 Step 6 – Launch EC2 Instance
-----------------------------------------------------------------------------------------
-Go to EC2 → Launch Instance.
+## 📦 Software Installation
 
-AMI: Ubuntu Server 22.04 LTS, Instance Type: t2.micro
+Run on **both EC2 instances**:
 
-VPC: My-Project-VPC, Subnet: Public-Subnet-1, Security Group: WebServer-SG
+```bash
+sudo yum update -y
+sudo yum install -y amazon-cloudwatch-agent stress
+```
 
-Click Launch Instance.
+### Web Server Only
 
-Result: EC2 instance created and ready to use.
+```bash
+sudo yum install -y httpd
+sudo systemctl start httpd
+sudo systemctl enable httpd
+```
 
-🛠 Step 7 – Install Nginx
-----------------------------------------------------------------------------------------
-SSH into EC2:
+---
 
-sudo apt update && sudo apt install nginx -y
+## 📊 CloudWatch Agent Configuration
 
-Check status:
+Configuration file location:
 
-systemctl status nginx
+```
+/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+```
 
-Result: Nginx installed and running.
+### Metrics Collected
 
-🌐 Step 8 – Deploy Your Website
-----------------------------------------------------------------------------------------
+* CPU usage
+* Memory utilization
+* Disk usage
+* Load average
 
-SSH into EC2 and navigate to /var/www/html/:
+### Logs Collected (Web Server)
 
-cd /var/www/html/  
-sudo rm index.nginx-debian.html  
+* Apache access logs
+* Apache error logs
 
+> ℹ On the App Server, Apache logs are ignored safely if files don’t exist.
 
-Restart Nginx:
+---
 
-sudo systemctl restart nginx
+## ▶ Start CloudWatch Agent
 
-Result: Website live at http://<Public-IP>.
+Run on **both servers**:
 
+```bash
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+-a fetch-config \
+-m ec2 \
+-c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
+-s
+```
 
+Enable service on boot:
 
-🛠 Optional: Host Website on S3 (Static)
-----------------------------------------------------------------------------------------
+```bash
+sudo systemctl enable amazon-cloudwatch-agent
+```
 
-Create an S3 bucket and enable Static Website Hosting.
+---
 
-Upload your website files and configure public access.
+## 📈 CloudWatch Dashboard
 
-Access the website via the provided S3 URL.
+### Dashboard Name
 
-Result: Static website hosted on S3.
+```
+EC2-Multi-Server-Monitoring
+```
 
+### Widgets Include
 
-✅ Summary:
-----------------------------------------------------------------------------------------
-Created VPC and public subnet
+* CPU usage per instance
+* Memory utilization per instance
+* Disk usage per instance
+* Load average comparison
+* Apache access & error logs
 
-Configured internet access and firewall rules
+✔ Single dashboard monitoring multiple EC2 instances
+✔ Easy comparison of server health
 
-Launched EC2 and installed Nginx
+---
 
-Deployed website with custom folder structure
+## 🚨 Alerting with CloudWatch Alarms
 
-Optional: Hosted on S3 for static content.
+### SNS Topic
+
+* **Name:** `ec2-monitoring-alerts`
+* **Protocol:** Email
+* **Purpose:** Alert notifications
+
+---
+
+### Alarms Configured
+
+| Alarm Name        | Instance      | Metric    |
+| ----------------- | ------------- | --------- |
+| WebServer-HighCPU | Web-Server-01 | CPU > 80% |
+| AppServer-HighCPU | App-Server-01 | CPU > 80% |
+
+**Optional Alarm**
+
+```
+Memory Usage > 75%
+```
+
+✔ Each alarm clearly identifies the affected server
+✔ Alerts delivered via SNS email
+
+---
+
+## 🧪 Testing & Validation
+
+### CPU Stress Test (Web Server)
+
+```bash
+stress --cpu 2 --timeout 300
+```
+
+### Memory Stress Test (App Server)
+
+```bash
+stress --vm 1 --vm-bytes 500M
+```
+
+### Expected Results
+
+* CloudWatch alarm triggered
+* SNS email notification received
+* Dashboard reflects high resource usage
+
+---
+
+## 🔐 Security Best Practices
+
+* IAM role-based authentication
+* No hardcoded credentials
+* Centralized logging & monitoring
+* Reusable configuration
+* Easily scalable to more EC2 instances
+
+---
+
+## 🧠 Interview / Viva Summary
+
+> “This project implements centralized monitoring for two EC2 instances using AWS CloudWatch. Metrics and logs are collected via the CloudWatch Agent, access is secured using IAM roles, dashboards provide real-time visibility, and SNS alerts notify us when resource thresholds are breached.”
+
+---
+
+## ✅ Final Notes
+
+* Industry-standard monitoring setup
+* Clean and scalable design
+* Ideal for **DevOps labs, cloud projects, and interviews**
+* Demonstrates strong understanding of AWS observability tools
