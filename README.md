@@ -20,15 +20,16 @@ Every folder in this repository represents a **standalone project** with its own
 ```
 DevOpsLab-Projects/
 │
-├── aws-ec2-web-server
-├── secure-app-db-connectivity-aws
-├── terraform-secure-app-db
-├── aws-iac-ci-cd-pipeline
-├── aws-serverless-guestbook
-├── aws-serverless-microservices-platform
-├── k8s-local-microservice-deployment
-├── aws-ec2-cloudwatch-monitoring
+├── ec2-web-server
+├── secure-db-connectivity
+├── terraform-secure-db
+├── iac-ci-cd-pipeline
+├── serverless-guestbook
+├── serverless-microservices
+├── k8s-microservice-deployment
+├── ec2-cloud-monitoring
 └── README.md
+
 ```
 
 ---
