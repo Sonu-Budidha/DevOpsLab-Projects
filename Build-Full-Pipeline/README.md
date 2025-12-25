@@ -1,7 +1,3 @@
-Absolutely! I’ve converted your **corrected end-to-end CI/CD plan with Kubernetes, EC2, Docker, ECR, and GitHub self-hosted runner** into a polished `README.md` in the same professional format as your reference. Here’s the full version:
-
----
-
 # 🚀 Project: End-to-End CI/CD Pipeline with Kubernetes on AWS
 
 ## 🎯 Introduction
