@@ -56,14 +56,23 @@ Provides an isolated network for both the application and the database.
 
 Create two subnets within the VPC:
 
-* **Public Subnet**
+* **Public Subnet01**
 
   * CIDR: `10.0.1.0/24`
   * Used for the EC2 application server
 
-* **Private Subnet**
+* **Public Subnet02**
 
   * CIDR: `10.0.2.0/24`
+  * Used for the EC2 application server
+
+* **Private Subnet01**
+
+  * CIDR: `10.0.3.0/24`
+  * Used for the RDS database
+
+* **Private Subnet**
+  * CIDR: `10.0.4.0/24`
   * Used for the RDS database
 
 **Purpose:**
